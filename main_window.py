@@ -2,7 +2,9 @@
 
 #IMPORTING LIBRARIES
 
+import os
 import sys
+import subprocess
 from PySide6.QtWidgets import QApplication, QMainWindow
 from PySide6.QtCore import Qt
 from PySide6.QtMultimedia import QMediaPlayer
@@ -13,6 +15,8 @@ from PySide6.QtGui import QPixmap
 # Make sure the paste.txt file is saved as a .py file (e.g., ui_mainwindow.py)
 from extwindow import Ui_MainWindow
 
+directory = os.path.abspath("..")
+
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -20,6 +24,33 @@ class MainWindow(QMainWindow):
         # Setup UI
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
+
+        # Connect Control Buttons
+        self.ui.calibrate.setEnabled(False)
+        self.ui.start.setEnabled(False)
+        self.ui.pause.setEnabled(False)
+        self.ui.stop.setEnabled(False)
+        """The update will update GUI, BASH files and all the ros2 nodes in the destined folder directly."""
+        self.ui.update.clicked.connect(self.update_software)
+        
+        """The initiate button will do early checking/testing of all the components and software modules."""
+        self.ui.initiate.clicked.connect(self.initiate_ros2)
+        
+        """The calibrate button will run motors in a way that robot only rotates in both directions one-by-one and check for camera feed, lidar feed, etc."""
+        self.ui.calibrate.clicked.connect(self.calibrate_robot)
+
+        """The start button will start running the robot based on manual or automatic mode."""
+        self.ui.start.clicked.connect(self.start_robot)
+
+        """The pause button will pause the robot functions but motors will be powered, sensors will be running just no movement at all."""
+        self.ui.pause.clicked.connect(self.pause_robot)
+
+        """The stop button will stop running all non-eesential nodes and power down the robot."""
+        self.ui.stop.clicked.connect(self.stop_robot)
+
+
+
+
         
         # Initialize video player
         self.media_player = QMediaPlayer()
@@ -55,11 +86,7 @@ class MainWindow(QMainWindow):
         self.ui.traject2dbutton.toggled.connect(lambda checked: self.select_video(2) if checked else None)    # Trajectory 2D Vision
         self.ui.traject3dbutton.toggled.connect(lambda checked: self.select_video(3) if checked else None)  # Trajectory 3D Vision
         
-        # Connect control buttons
-        self.ui.start.clicked.connect(self.play_video)     # Start
-        self.ui.pause.clicked.connect(self.pause_video)    # Pause
-        self.ui.stop.clicked.connect(self.stop_video)     # Stop
-        
+
         # Connect directional buttons
         self.ui.pushButton_7.clicked.connect(self.move_forward)   # Forward
         self.ui.pushButton_8.clicked.connect(self.move_backward)  # Backward
@@ -106,6 +133,108 @@ class MainWindow(QMainWindow):
         self.ui.lcdNumber_10.display(0.0)  # Speed
         self.ui.lcdNumber_11.display(0.0)  # Angular Speed
         self.ui.lcdNumber_12.display(0.0)  # Heading
+    
+
+    def update_software(self):
+        result = subprocess.run(['bash', directory + '/hils_ugv/update.bash'], capture_output=True, text=True)
+        print(result)
+
+
+    def initiate_ros2(self):
+        self.ui.update.setEnabled(False)
+        self.ui.initiate.setEnabled(False)
+        self.ui.calibrate.setEnabled(True)
+
+    def calibrate_robot(self):
+        self.ui.calibrate.setEnabled(False)
+        self.ui.start.setEnabled(True)
+
+    def start_robot(self):
+        self.ui.start.setEnabled(False)
+        self.ui.pause.setEnabled(True)
+        self.ui.stop.setEnabled(True)
+
+    def pause_robot(self):
+        self.ui.pause.setEnabled(False)
+        self.ui.start.setEnabled(True)
+        self.ui.stop.setEnabled(True)
+
+    def stop_robot(self):
+        self.ui.update.setEnabled(True)
+        self.ui.initiate.setEnabled(True)
+        self.ui.start.setEnabled(False)
+        self.ui.stop.setEnabled(False)
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         
     def select_video(self, index):
         """Select and load video based on radio button selection"""
