@@ -50,15 +50,15 @@ class MainWindow(QMainWindow):
         ]
         
         # Connect radio buttons to video selection
-        self.ui.radioButton_3.toggled.connect(lambda checked: self.select_video(0) if checked else None)  # RGB-D Camera
-        self.ui.radioButton_2.toggled.connect(lambda checked: self.select_video(1) if checked else None)  # 3D-LiDAR Vision
-        self.ui.radioButton.toggled.connect(lambda checked: self.select_video(2) if checked else None)    # Trajectory 2D Vision
-        self.ui.radioButton_4.toggled.connect(lambda checked: self.select_video(3) if checked else None)  # Trajectory 3D Vision
+        self.ui.rgbdbutton.toggled.connect(lambda checked: self.select_video(0) if checked else None)  # RGB-D Camera
+        self.ui.lidarbutton.toggled.connect(lambda checked: self.select_video(1) if checked else None)  # 3D-LiDAR Vision
+        self.ui.traject2dbutton.toggled.connect(lambda checked: self.select_video(2) if checked else None)    # Trajectory 2D Vision
+        self.ui.traject3dbutton.toggled.connect(lambda checked: self.select_video(3) if checked else None)  # Trajectory 3D Vision
         
         # Connect control buttons
-        self.ui.pushButton_4.clicked.connect(self.play_video)     # Start
-        self.ui.pushButton_5.clicked.connect(self.pause_video)    # Pause
-        self.ui.pushButton_6.clicked.connect(self.stop_video)     # Stop
+        self.ui.start.clicked.connect(self.play_video)     # Start
+        self.ui.pause.clicked.connect(self.pause_video)    # Pause
+        self.ui.stop.clicked.connect(self.stop_video)     # Stop
         
         # Connect directional buttons
         self.ui.pushButton_7.clicked.connect(self.move_forward)   # Forward
